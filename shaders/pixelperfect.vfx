@@ -1,0 +1,78 @@
+//=========================================================================================================================
+// Optional
+//=========================================================================================================================
+HEADER
+{
+	CompileTargets = ( IS_SM_50 && ( PC || VULKAN ) );
+	Description = "Template Shader for S&box";
+}
+
+//=========================================================================================================================
+// Optional
+//=========================================================================================================================
+FEATURES
+{
+    #include "common/features.hlsl"
+}
+
+//=========================================================================================================================
+COMMON
+{
+	#include "common/shared.hlsl"
+}
+
+//=========================================================================================================================
+
+struct VertexInput
+{
+	#include "common/vertexinput.hlsl"
+};
+
+//=========================================================================================================================
+
+struct PixelInput
+{
+	#include "common/pixelinput.hlsl"
+};
+
+//=========================================================================================================================
+
+VS
+{
+	#include "common/vertex.hlsl"
+	//
+	// Main
+	//
+	PixelInput MainVs( INSTANCED_SHADER_PARAMS( VertexInput i ) )
+	{
+		PixelInput o = ProcessVertex( i );
+		// Add your vertex manipulation functions here
+		return FinalizeVertex( o );
+	}
+}
+
+//=========================================================================================================================
+
+PS
+{
+	#define CUSTOM_TEXTURE_FILTERING
+	SamplerState TextureFiltering < Filter( POINT ); MaxAniso( 8 ); >;
+    #include "common/pixel.hlsl"
+	//
+	// Main
+	//
+	PixelOutput MainPs( PixelInput i )
+	{
+		//Material m = GatherMaterial( i );
+		/* m.Metalness = 1.3f; // Forces the object to be metalic */
+		//return FinalizePixelMaterial( i, m );
+		float2 vUV = i.vTextureCoords.xy;
+		float4 c = Tex2DS(g_tColor,TextureFiltering, vUV).rgba;
+		if(c.r >= 1.0 && c.g <= 0.0 && c.b >= 1.0){
+			discard;
+		}
+		PixelOutput o;
+        o.vColor = c * i.vVertexColor;
+		return o;
+	}
+}

@@ -1,0 +1,23 @@
+{
+  "Title": "SDooM",
+  "Type": "game",
+  "Org": "ataco",
+  "Ident": "doom",
+  "Schema": 1,
+  "HasAssets": true,
+  "AssetsPath": "",
+  "ResourcePaths": [
+    "/include/*"
+  ],
+  "HasCode": true,
+  "CodePath": "/code/",
+  "RootNamespace": "Sandbox",
+  "Metadata": {
+    "MapList": [
+      "ataco.doom_void"
+    ],
+    "MapSelect": 1,
+    "MinPlayers": 1,
+    "MaxPlayers": 4
+  }
+}

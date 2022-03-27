@@ -1,0 +1,61 @@
+using System;
+using Sandbox;
+using MeltySynth;
+using System.Linq;
+using System.Collections.Generic;
+
+public class MusicLoader {
+    public static SoundStream? LoadMusic(string soundName){
+        foreach (Lump l in WadLoader.lumps)
+        {
+            if (l.lumpName != soundName)
+                continue;
+
+            /*int p = 0;
+            int format = l.data[p++] | ((int)l.data[p++]) << 8;
+            if (format != 3)
+            {
+                Log.Info("SoundLoader: LoadSound: \"" + soundName + "\" format != 3 (" + format + ")");
+                return null;
+            }
+
+            int samplerate = l.data[p++] | ((int)l.data[p++]) << 8;
+            int count = (int)(l.data[p++] | (int)l.data[p++] << 8 | (int)l.data[p++] << 16 | (int)l.data[p++] << 24);
+            count -= 32; //sound lumps have 16 bytes before and after samples as padding
+
+            p += 16; //padding
+            short[] samples = new short[count];
+            for (int i = 0; i < count; i++)
+                samples[i] = (short)l.data[p++];
+
+            //AudioClip clip = AudioClip.Create(soundName, count, 1, samplerate, false);
+            //clip.SetData(samples, 0);
+            //return clip;
+            Log.Info($"{samplerate} {count} {count/samplerate}");
+            var strm = Sound.FromScreen("").CreateStream(samplerate, 1);
+            strm.WriteData(samples);
+            return strm;*/
+            var musicer = new ManagedDoom.SFML.SfmlMusic();
+            musicer.StartMusic(false, l);
+            musicer.stream.OnGetData(out short[] samples);
+            Log.Info(samples.Length);
+            Log.Info(samples[0]);
+            var snd = Sound.FromWorld("audiostream.default", Local.Pawn.Position);
+            var strm = snd.CreateStream(44100, 1);
+            if(!strm.IsValid){
+                Log.Info("STREAM NOT VALID? WHY!!!");
+            }
+            List<short> data = new();
+            for(int i=0; i < 300; i++){
+                data.AddRange(samples.Where((c,i)=>i%2==0).Select(c=>(short)(c >> 8)));
+                musicer.stream.OnGetData(out samples);
+            }
+            strm.WriteData(data.ToArray());
+            return strm;
+
+        }
+
+        Log.Info("SoundLoader: LoadSound: Could not find sound \"" + soundName + "\"");
+        return null;
+    }
+}
