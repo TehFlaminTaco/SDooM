@@ -9,11 +9,14 @@ public class BoxShellPickup : ThingEntity {
         }
     }
     public override void OnTouched(DoomPlayer ply){
-        if(Host.IsServer){
-            ply.shellAmmo += 20;
+        if(ply.shellAmmo < ply.AmmoMax(AmmoType.Shell)){
+            if(Host.IsServer){
+                ply.AddAmmo(AmmoType.Shell, 20);
+            }
+            
+            ItemPickupFlash.DoFlash();
+            if(IsServer)Delete();
         }
         
-        ItemPickupFlash.DoFlash();
-        if(IsServer)Delete();
     }
 }

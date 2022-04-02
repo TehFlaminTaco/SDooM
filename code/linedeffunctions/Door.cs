@@ -4,6 +4,7 @@ using Sandbox;
 public class Door : SectorMover {
     bool isOpening = true;
     bool isClosing = false;
+    public bool StayOpen = false;
     TimeSince finishedOpening = 0f;
     public override float GetMoveTarget(){
         if(isOpening){
@@ -24,6 +25,9 @@ public class Door : SectorMover {
         if(isOpening){
             isOpening = false;
             finishedOpening = 0f;
+            if(StayOpen){
+                DeleteAsync(0.1f);
+            }
         }
         if(isClosing){
             isClosing = false;

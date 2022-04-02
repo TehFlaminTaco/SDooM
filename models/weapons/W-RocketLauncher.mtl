@@ -1,0 +1,10 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v5.0.2255862537)
+
+newmtl MD3_[default][Group]
+Kd 1 1 1
+Ka 0.050000001 0.050000001 0.050000001
+Ks 1 1 1
+illum 1
+map_Kd Grocketlnchr.png
+

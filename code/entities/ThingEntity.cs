@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Sandbox;
 
@@ -17,17 +18,29 @@ public partial class ThingEntity : Prop {
     [Net, Predicted] public string SpriteName {get;set;}
     [Event.Frame]
     public void OnFrame(){
-        if(sprite==null || !sprite.IsValid){
-            sprite = new();
-            sprite.Parent = this;
-            sprite.LocalPosition = Vector3.Zero;
+        if(DrawBillboard()){
+            if(sprite==null || !sprite.IsValid){
+                sprite = new();
+                sprite.Parent = this;
+                sprite.LocalPosition = Vector3.Zero;
+            }
+            sprite.SpriteCentered = SpriteCentered;
+            sprite.FullBright = FullBright;
+            sprite.SetSprite(SpriteName, FlipUV);
+        }else{
+            // Destroy billboard if it exists
+            if(sprite!=null && sprite.IsValid){
+                sprite.Delete();
+                sprite = null;
+            }
         }
-        sprite.SpriteCentered = SpriteCentered;
-        sprite.FullBright = FullBright;
-        sprite.SetSprite(SpriteName, FlipUV);
     }
 
-    [Event.Tick.Server]
+	public virtual string GetObituary( DoomPlayer victim, Entity murderWeapon ){
+        return $"{victim.Client?.Name??"Doomguy"} was killed by {this.GetType().Name}";
+	}
+
+	[Event.Tick.Server]
     public void KeepUpright(){
         Rotation = Rotation.FromYaw(Rotation.Angles().yaw);
     }
@@ -41,6 +54,9 @@ public partial class ThingEntity : Prop {
     }
 
     public virtual void OnTouched(DoomPlayer ply){}
+
+    // virtual method to Let children hide their billboard to certain clients.
+    public virtual bool DrawBillboard(){return true;}
 }
 
 public class BillboardSprite : ModelEntity{
@@ -53,8 +69,8 @@ public class BillboardSprite : ModelEntity{
     public void UpdateRotation(){
         if(!IsValid) return;
         if(Local.Pawn is not DoomPlayer ply)return;
-        var camPos = ply.CameraPosition().position;
-        Rotation = Rotation.FromYaw(Rotation.LookAt(camPos - Position).Angles().yaw + 90);
+        var camAng = ply.CameraPosition().angle;
+        Rotation = Rotation.FromYaw(camAng.Angles().yaw - 90);
         var sector = DoomMap.GetSector(Position);
 		if(sector!=null)RenderColor = FullBright?Color.White:new Color(sector.brightness,sector.brightness,sector.brightness,1);
     }

@@ -9,6 +9,8 @@ public class ChaingunPickup : ThingEntity {
         }
     }
     public override void OnTouched(DoomPlayer ply){
+        bool hasWep = (ply.Inventory as Inventory).All().OfType<Chaingun>().Any();
+        if(ply.AmmoCount(AmmoType.Bullet)>=ply.AmmoMax(AmmoType.Bullet) && hasWep)return;
         if(ply==Local.Pawn)StatusText.AddChatEntry("","Got the chaingun!");
         if(Host.IsServer){
             if(!(ply.Inventory as Inventory).All().OfType<Chaingun>().Any()){
@@ -20,7 +22,7 @@ public class ChaingunPickup : ThingEntity {
             }else{
                 SoundLoader.PlaySound("DSITEMUP", Position);
             }
-            ply.bulletAmmo += 20;
+            ply.AddAmmo(AmmoType.Bullet, 20);
         }
         
         ItemPickupFlash.DoFlash();

@@ -12,12 +12,21 @@ public class StatusBar : Panel {
     DoomTextBig ammo;
     Dictionary<AmmoType, DoomTextAmmo> ammoAmounts = new();
     Dictionary<AmmoType, DoomTextAmmo> ammoMaxes = new();
+
+    // Blue yellow red key displays
+    KeycardDisplay blueKeyDisplay;
+    KeycardDisplay yellowKeyDisplay;
+    KeycardDisplay redKeyDisplay;
+
     public StatusBar(){
         face = AddChild<Face>();
         arms = AddChild<Arms>();
         health = AddChild<DoomTextBig>("health");
         armor = AddChild<DoomTextBig>("armor");
         ammo = AddChild<DoomTextBig>("ammo");
+        AddChild(blueKeyDisplay = new(0, "blue"));
+        AddChild(yellowKeyDisplay = new(1, "yellow"));
+        AddChild(redKeyDisplay = new(2, "red"));
 
         foreach(var typ in Enum.GetValues<AmmoType>().Where(c=>c!=AmmoType.None)){
             var ammoAmount = AddChild<DoomTextAmmo>();

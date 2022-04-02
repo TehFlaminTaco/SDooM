@@ -1,9 +1,31 @@
 using System;
 using Sandbox;
 using System.Collections.Generic;
+using System.Linq;
 
 public partial class DoomPlayer : Player
 {
+	public struct KeyData {
+		public byte Blue;
+		public byte Yellow;
+		public byte Red;
+		public KeyData(byte blue, byte yellow, byte red) {
+			Blue = blue;
+			Yellow = yellow;
+			Red = red;
+		}
+
+		public KeyData WithBlue(byte blue) {
+			return new KeyData(blue, Yellow, Red);
+		}
+		public KeyData WithYellow(byte yellow) {
+			return new KeyData(Blue, yellow, Red);
+		}
+		public KeyData WithRed(byte red) {
+			return new KeyData(Blue, Yellow, red);
+		}
+	}
+
 	private TimeSince timeSinceDropped;
 	private TimeSince timeSinceJumpReleased;
 
@@ -17,6 +39,9 @@ public partial class DoomPlayer : Player
 	[Net, Predicted] public bool IsThirdPerson {get; set;}
 	[Net, Predicted] public int Armor {get; set;}
 	[Net, Predicted] public bool HasStrongArmor {get; set;}
+
+	//[Net] public (int blue, int yellow, int red) keys {get;set;} 
+	[Net, Predicted] public KeyData Keys {get;set;}
 
 	public Clothing.Container Clothing = new();
 
@@ -41,6 +66,8 @@ public partial class DoomPlayer : Player
 		IsThirdPerson = false;
 		MainCamera = new FirstPersonCamera();
 		LastCamera = MainCamera;
+
+		Keys = new(0,0,0);
 
 		base.Spawn();
 	}
@@ -99,7 +126,7 @@ public partial class DoomPlayer : Player
 
 		bulletAmmo = 50;
 		shellAmmo = 0;
-		rocketAmmo = 0;
+		rocketAmmo = 10;
 		cellAmmo = 0;
 
 		Armor = 0;
@@ -107,6 +134,10 @@ public partial class DoomPlayer : Player
 
 		AddCollisionLayer(CollisionLayer.Hitbox);
 		AddCollisionLayer(CollisionLayer.Player);
+
+		if(DoomGame.DEATHMATCH){
+			Keys = new(2,2,2);
+		}
 		base.Respawn();
 	}
 
@@ -131,6 +162,8 @@ public partial class DoomPlayer : Player
 		}else{
 			SoundLoader.PlaySound("DSPLDETH", Position);
 		}
+
+		StatusText.AddChatEntry(To.Everyone, "", DoomGame.GetObituary(lastDamage.Attacker, this, lastDamage.Weapon));
 
 		BecomeRagdollOnClient( Velocity, lastDamage.Flags, lastDamage.Position, lastDamage.Force, GetHitboxBone( lastDamage.HitboxIndex ) );
 		LastCamera = MainCamera;
@@ -204,7 +237,12 @@ public partial class DoomPlayer : Player
     public void UpdateShading(){
         if(!IsValid) return;
         var sector = DoomMap.GetSector(Position);
-		if(sector!=null)RenderColor = new Color(sector.brightness,sector.brightness,sector.brightness,1);
+		if(sector!=null){
+			RenderColor = new Color(sector.brightness,sector.brightness,sector.brightness,1);
+			foreach(var cloth in Children.OfType<ModelEntity>()){
+				cloth.RenderColor = new Color(sector.brightness,sector.brightness,sector.brightness,1);
+			}
+		}
     }
 
 	public TimeSince RampageStart = 0;

@@ -127,4 +127,8 @@ partial class Fists : Weapon
 		ViewModelEntity?.SetAnimParameter( "attack", true );
 		ViewModelEntity?.SetAnimParameter( "holdtype_attack", leftHand ? 2 : 1 );
 	}
+
+	public override string GetObituary(DoomPlayer victim, DoomPlayer killer){
+		return $"{killer.Client?.Name??"Doomguy"} beat {victim.Client?.Name??"Doomguy"} to death with his bare hands!";
+	}
 }

@@ -101,7 +101,7 @@ public partial class DoomMap : Prop {
                 if (l.Back != null)
                 {
                     //top part (front)
-                    if (l.Front.Sector.ceilingHeight > l.Back.Sector.ceilingHeight)
+                    if (l.Front.tHigh != "-" || l.Front.Sector.ceilingHeight > l.Back.Sector.ceilingHeight)
                         l.TopFrontObject = new LineMeshProp(){
 							solid = true,
 							_line = index,
@@ -111,7 +111,7 @@ public partial class DoomMap : Prop {
 						};
 
                     //top part (back)
-                    if (l.Front.Sector.ceilingHeight < l.Back.Sector.ceilingHeight)
+                    if (l.Back.tHigh != "-" || l.Front.Sector.ceilingHeight < l.Back.Sector.ceilingHeight)
                         l.TopBackObject = new LineMeshProp(){
 							solid = true,
 							_line = index,
@@ -121,7 +121,7 @@ public partial class DoomMap : Prop {
 						};
 
                     //bottom part (front)
-                    if (l.Front.Sector.minimumFloorHeight < l.Back.Sector.floorHeight)
+                    if (l.Front.tLow != "-" || l.Front.Sector.minimumFloorHeight < l.Back.Sector.floorHeight)
                         l.BotFrontObject = new LineMeshProp(){
 							solid = true,
 							_line = index,
@@ -130,7 +130,7 @@ public partial class DoomMap : Prop {
 							Parent = this
 						};
                     //bottom part (back)
-                    if (l.Front.Sector.floorHeight > l.Back.Sector.floorHeight)
+                    if (l.Back.tLow != "-" || l.Front.Sector.floorHeight > l.Back.Sector.floorHeight)
                         l.BotBackObject = new LineMeshProp(){
 							solid = true,
 							_line = index,
@@ -185,7 +185,7 @@ public partial class DoomMap : Prop {
 						solid = true,
 						_line = index,
 						isSolidWall = true,
-						isFront = false,
+						isFront = true,
 						Parent = this
 					};
 
@@ -358,7 +358,7 @@ public partial class LineMeshProp : MeshProp {
 			line.Back.Sector.ceilingHeight,
 			line.Back.tHigh,
 			line.Back.offsetX,
-			(line.flags & (1 << 3)) != 0 ? line.Back.offsetY : line.Back.offsetY,
+			(line.flags & (1 << 3)) != 0 ? line.Back.offsetY : -line.Back.offsetY,
 			(line.flags & (1 << 3)) != 0 ? 0 : 1,
 			true,
 			line.Back.Sector.brightness
@@ -407,9 +407,13 @@ public partial class LineMeshProp : MeshProp {
 			true,
 			l.Back.Sector.brightness
 		);
+		else
+			Log.Info("Unknown state!");
 		if(mp.mesh == null){
-			Log.Info($"{position} {isFront} {isInvisibleBlocker} {isSolidWall}");
-			Log.Error("Couldn't generate mesh!");
+			//Log.Info($"{position} {isFront} {isInvisibleBlocker} {isSolidWall}");
+			//Log.Error("Couldn't generate mesh!");
+			Model = null;
+			return;
 		}
 		Finish(mp);
 		if(position == 2 || isInvisibleBlocker){
@@ -436,30 +440,30 @@ public partial class LineMeshProp : MeshProp {
 
 	public (Mesh, List<VoxelVertex>) CreateLineQuad(Sidedef s, float min, float max, string tex, int offsetX, int offsetY, int peg, bool invert, float brightness)
     {
-        /*if (max - min <= 0)
+        if (max - min <= 0)
             return (null,null);
 
         if (s.Line.start == s.Line.end)
-            return (null,null);*/
+            return (null,null);
 
         if (tex == "-")
             tex = "DOORTRAK";
         Mesh mesh = new Mesh();
         Texture mainTexture = null;
 		Material mat;
+		bool hasAlphaCut = false;
         if (!MaterialManager.Instance.OverridesWall(tex, out var mr))
             if (TextureLoader2.NeedsAlphacut.ContainsKey(tex))
-                mat = MaterialManager.Instance.alphacutMaterial;
+               	hasAlphaCut = true;
             else
-                mat = MaterialManager.Instance.defaultMaterial;
-		else
-			mat=mr;
+                hasAlphaCut = false;
+		mat=mr;
 		
 		mainTexture = TextureLoader2.Instance.GetWallTexture(tex);
 		if(mat == null){
-			mat = Material.Load("materials/pixelperfect.vmat").CreateCopy();
+			mat = Material.Load(hasAlphaCut ? "materials/pixelperfect.vmat" : "materials/pixelperfectnoalpha.vmat").CreateCopy();
 			mat.OverrideTexture("Color", mainTexture);
-			TextureAnimator.TryGenerateAnimator(this, mat, tex, TextureAnimator.Mode.WALL);
+			TextureAnimator.TryGenerateAnimator(this, mat, tex, TextureAnimator.Mode.WALL); // TODO: Don't do if already has an animator.
 		}
 		mesh.Material = mat;
         int vc = 4;

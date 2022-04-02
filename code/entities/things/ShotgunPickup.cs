@@ -10,9 +10,11 @@ public class ShotgunPickup : ThingEntity {
     }
     public int ammoHeld = 8;
     public override void OnTouched(DoomPlayer ply){
+        bool hasWep = (ply.Inventory as Inventory).All().OfType<Shotgun>().Any();
+        if(ply.AmmoCount(AmmoType.Shell)>=ply.AmmoMax(AmmoType.Shell) && hasWep)return;
         if(ply==Local.Pawn)StatusText.AddChatEntry("","Got the shotgun!");
         if(Host.IsServer){
-            if(!(ply.Inventory as Inventory).All().OfType<Shotgun>().Any()){
+            if(!hasWep){
                 var sgun = new Shotgun();
                 ply.Inventory.Add(sgun);
                 ply.ActiveChild = sgun;
@@ -21,7 +23,7 @@ public class ShotgunPickup : ThingEntity {
             }else{
                 SoundLoader.PlaySound("DSITEMUP", Position);
             }
-            ply.shellAmmo += ammoHeld;
+            ply.AddAmmo(AmmoType.Shell, ammoHeld);
         }
         
         ItemPickupFlash.DoFlash();

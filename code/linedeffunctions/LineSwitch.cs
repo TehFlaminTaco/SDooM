@@ -7,6 +7,7 @@ public class LineSwitch : AnimEntity {
     TimeSince switchFinish = 0f;
     bool switchTurnedOn = false;
     bool switchTurnedOff = false;
+    public bool Stay = false;
     private static Regex SwitchNameOff = new Regex(@"^SW1");
     private static Regex SwitchNameOn = new Regex(@"^SW2");
     [Event.Tick]
@@ -27,9 +28,14 @@ public class LineSwitch : AnimEntity {
             if(Host.IsServer){
                 SoundLoader.PlaySound("DSSWTCHN", smp.CollisionWorldSpaceCenter);
             }
-            switchFinish = -1f;
-            switchTurnedOn = true;
-            smp.line.Rebuild();
+            if(Stay){
+                switchTurnedOff = true;
+                switchTurnedOn = true;
+            }else{
+                switchFinish = -1f;
+                switchTurnedOn = true;
+                smp.line.Rebuild();
+            }
         }else if(!switchTurnedOff){
             if(switchFinish > 0){
                 if(line.Front != null){

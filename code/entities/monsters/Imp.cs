@@ -17,6 +17,11 @@ public class Imp : Monster {
     public override bool HasMissile => true;
     public override bool HasMelee => true;
 
+    public override string GetObituary( DoomPlayer victim, Entity murderWeapon ){
+        if(murderWeapon is null)return $"{victim.Client?.Name??"Doomguy"} was slashed by an Imp.";
+        return $"{victim.Client?.Name??"Doomguy"} was burned by an Imp.";
+    }
+
     public override IEnumerator StateMissile() {
         animationSteps = "E";
         animationTime = 8;

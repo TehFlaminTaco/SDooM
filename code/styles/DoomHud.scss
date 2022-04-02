@@ -89,6 +89,22 @@ UIBar {
     StatusBar{
         background-size:contain;
         image-rendering:pixelated;
+
+        KeycardDisplay{
+            background-size:contain;
+            image-rendering:pixelated;
+            left:74.6875%;
+            &.blue{
+                top: 9.375%;
+            }
+            &.yellow{
+                top: 40.625%;
+            }
+            &.red{
+                top: 71.875%;
+            }
+        }
+
         DoomTextBig{
             BigTextLetter{
                 background-size:contain;

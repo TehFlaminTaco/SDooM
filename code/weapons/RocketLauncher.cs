@@ -4,7 +4,7 @@ using Sandbox;
 [Library( "weapon_rocketlauncher", Title = "Rocket Launcher", Spawnable = true, Group = "Weapon" )]
 partial class RocketLauncher : Weapon
 {
-	public override string ViewModelPath => "weapons/rust_pistol/v_rust_pistol.vmdl";
+	public override string ViewModelPath => "models/weapons/w_rocketlauncher.vmdl";
 
 	public override float PrimaryRate => 15.0f;
 	public override float SecondaryRate => 1.0f;
@@ -20,7 +20,7 @@ partial class RocketLauncher : Weapon
 	{
 		base.Spawn();
 
-		SetModel( "weapons/rust_pistol/rust_pistol.vmdl" );
+		SetModel( "models/weapons/w_rocketlauncher.vmdl" );
 		SetupPhysicsFromModel( PhysicsMotionType.Dynamic, false );
 	}
 
@@ -37,44 +37,33 @@ partial class RocketLauncher : Weapon
 		(Owner as AnimEntity)?.SetAnimParameter( "b_attack", true );
 
 		ShootEffects();
-		PlaySound( "rust_pistol.shoot" );
 		//ShootBullet( 0.05f, Force, Damage, 3.0f );
 		if(IsServer){
 			var startPos = Owner.EyePosition + Owner.EyeRotation.Forward * 30f;
+			SoundLoader.PlaySound("DSRLAUNC", startPos);
 			var dir = Rotation.LookAt(((Owner as DoomPlayer).EyeTrace().EndPosition - startPos).Normal);
 			var rocket = new Rocket();
 			rocket.Position = startPos;
 			rocket.Rotation = dir.RotateAroundAxis(Vector3.Right, 90f);
 			rocket.ApplyAbsoluteImpulse(dir.Forward * 30000f);
 		}
+		TimeSinceDischarge = 0f;
 		(Owner as DoomPlayer).RemoveAmmo(Clip1Type, 1);
 	}
 
-	private void Discharge()
+	public override void SimulateAnimator( PawnAnimator anim )
 	{
-		if ( TimeSinceDischarge < 0.5f )
-			return;
-
-		TimeSinceDischarge = 0;
-
-		var muzzle = GetAttachment( "muzzle" ) ?? default;
-		var pos = muzzle.Position;
-		var rot = muzzle.Rotation;
-
-		ShootEffects();
-		PlaySound( "rust_pistol.shoot" );
-		//ShootBullet( pos, rot.Forward, 0.05f, Force, Damage, 3.0f );
-
-		ApplyAbsoluteImpulse( rot.Backward * 200.0f );
+		anim.SetAnimParameter( "holdtype", 3 ); // TODO this is shit
 	}
 
-	protected override void OnPhysicsCollision( CollisionEventData eventData )
-	{
-		if ( eventData.Speed > 500.0f )
-		{
-			Discharge();
+	public override Vector3 ViewmodelOffset {get {
+		var thumpAmount = 0f;
+		if(TimeSinceDischarge < 0.5f){
+			float x = 0.5f - (TimeSinceDischarge);
+			thumpAmount = 4*(x*x) - (float)System.Math.Pow(2*x, 9f);
 		}
-	}
+		return new Vector3(8f-(thumpAmount*10f),0f,-10f);
+		}}
 }
 
 partial class Rocket : Prop {

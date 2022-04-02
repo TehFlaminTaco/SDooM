@@ -47,24 +47,44 @@ partial class DoomPlayer{
         return 0;
     }
 
-    public void AddAmmo(AmmoType typ, int amount){
+    public int AddAmmo(AmmoType typ, int amount){
         switch(typ){
             case AmmoType.None:
-                return;
+                return 0;
             case AmmoType.Bullet:
+                if(bulletAmmo + amount > AmmoMax(typ)){
+                    int diff = AmmoMax(typ) - bulletAmmo;
+                    bulletAmmo = AmmoMax(typ);
+                    return diff;
+                }
                 bulletAmmo += amount;
-                return;
+                return amount;
             case AmmoType.Shell:
+                if(shellAmmo + amount > AmmoMax(typ)){
+                    int diff = AmmoMax(typ) - shellAmmo;
+                    shellAmmo = AmmoMax(typ);
+                    return diff;
+                }
                 shellAmmo += amount;
-                return;
+                return amount;
             case AmmoType.Rocket:
+                if(rocketAmmo + amount > AmmoMax(typ)){
+                    int diff = AmmoMax(typ) - rocketAmmo;
+                    rocketAmmo = AmmoMax(typ);
+                    return diff;
+                }
                 rocketAmmo += amount;
-                return;
+                return amount;
             case AmmoType.Cell:
+                if(cellAmmo + amount > AmmoMax(typ)){
+                    int diff = AmmoMax(typ) - cellAmmo;
+                    cellAmmo = AmmoMax(typ);
+                    return diff;
+                }
                 cellAmmo += amount;
-                return;
+                return amount;
         }
-        return;
+        return 0;
     }
 
     public int RemoveAmmo(AmmoType typ, int amount){

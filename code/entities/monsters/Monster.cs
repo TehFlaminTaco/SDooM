@@ -111,6 +111,7 @@ public partial class Monster : ThingEntity {
     bool heardEnemy = false;
     public bool LookForTargets(){
         var sec = DoomMap.GetSector(Position);
+        if(sec == null)return false;
         if(sec.SoundTarget!=null && sec.SoundTarget.IsValid && sec.SoundTarget.Health>0){
             heardEnemy = true;
             if(!isAmbusher){
@@ -520,6 +521,10 @@ public partial class Monster : ThingEntity {
 					.WithWeapon( this );
 
 				tr.Entity.TakeDamage( damageInfo );
+
+                if(tr.Entity is LineMeshProp lmp){
+					lmp.OnShoot();
+				}
 			}
 		}
 	}

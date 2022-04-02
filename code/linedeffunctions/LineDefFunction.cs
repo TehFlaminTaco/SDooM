@@ -16,10 +16,21 @@ public partial class LineDefFunction : AnimEntity {
 public partial class LineMeshProp : IUse{
     public bool OnUse( Entity user )
 	{
+		if(user is not DoomPlayer ply)return false;
 		if(Host.IsServer){
 			switch(line.lineType){
-				case 1:{
+				case 1: case 26: case 27: case 28: {
 					if(line.Back.Sector.mover == null || !line.Back.Sector.mover.IsValid){
+						if(line.lineType > 1){ // If this is a key door.
+							if(line.lineType switch {
+								26 => ply.Keys.Blue == 0,
+								27 => ply.Keys.Yellow == 0,
+								28 => ply.Keys.Red == 0,
+								_ => true
+							}){ // And we don't have a key
+								return false; // Exit.
+							}
+						}
 						line.Back.Sector.mover=new Door(){
 							Parent = line.Back.Sector.ceilingObject,
 							sector = line.Back.Sector
@@ -39,9 +50,50 @@ public partial class LineMeshProp : IUse{
 					}
 					break;
 				}
+				case 103:{ // S1 Door Open Stay
+					if(line.Switcher == null || !line.Switcher.IsValid){
+						var sec = MapLoader.sectors.Where(c=>c.tag == line.lineTag);
+						if(!sec.Any())return false;
+						foreach(var s in sec){
+							if(s.mover == null || !s.mover.IsValid){
+								s.mover = new Door(){
+									Parent = s.ceilingObject,
+									sector = s,
+									StayOpen = true
+								};
+							}
+						}
+						line.Switcher=new LineSwitch(){
+							Parent = line.gameObjects.Where(c=>c!=null).First(),
+							line = line,
+							Stay = true
+						};
+					}
+					break;
+				}
 			}
 		}
 		return true;
+	}
+
+	public void OnShoot(){
+		if(Host.IsServer){
+			switch(line.lineType){
+				case 46:
+					var sec = MapLoader.sectors.Where(c=>c.tag == line.lineTag);
+					if(!sec.Any())return;
+					foreach(var s in sec){
+						if(s.mover == null || !s.mover.IsValid){
+							s.mover = new Door(){
+								Parent = s.ceilingObject,
+								sector = s,
+								StayOpen = true
+							};
+						}
+					}
+					break;
+			}
+		}
 	}
 
 	public bool IsUsable( Entity user )

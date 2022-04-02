@@ -8,7 +8,7 @@ public class SectorMover : AnimEntity {
 
 
     TimeSince nextTick = 0f;
-    [Event.Tick.Client]
+    [Event.Frame]
     public void RebuildMesh(){
         if(Parent is not SectorMeshProp smp)return;
         smp.sector.Rebuild();

@@ -45,7 +45,7 @@ public class MonsterProjectile : ThingEntity {
                 if(sequence != DeathSequence){
                     sequence = DeathSequence;
                     spriteIndex = 0;
-                    tr.Entity.TakeDamage(DamageInfo.Generic(Damage).WithAttacker(Attacker));
+                    tr.Entity.TakeDamage(DamageInfo.Generic(Damage).WithAttacker(Attacker).WithWeapon(this));
                 }
             }else{
                 Position = tr.EndPosition;

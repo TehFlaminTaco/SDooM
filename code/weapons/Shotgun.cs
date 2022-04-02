@@ -19,7 +19,7 @@ partial class Shotgun : Weapon
 
 	public override void AttackPrimary()
 	{
-		if(Host.IsServer)DoomMap.GetSector(Owner.Position).PropogateSound(Owner);
+		if(Host.IsServer)DoomMap.GetSector(Owner.Position)?.PropogateSound(Owner);
 		TimeSincePrimaryAttack = 0;
 		TimeSinceSecondaryAttack = 0;
 

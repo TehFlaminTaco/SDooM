@@ -15,6 +15,10 @@ public class ZombieMan : Monster {
 
     public override bool HasMissile => true;
 
+    public override string GetObituary( DoomPlayer victim, Entity murderWeapon ){
+        return $"{victim.Client?.Name??"Doomguy"} was killed by a Zombieman.";
+    }
+
     public override void OnDeath(DamageInfo hit){
         if(IsServer){
             var clip = new ClipPickup(){

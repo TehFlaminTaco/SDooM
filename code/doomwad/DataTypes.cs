@@ -12,6 +12,10 @@ public class Thing
     public int _facing;
     public int thingType;
     public int flags;
+    public ThingEntity ent;
+    public bool doesRespawn = false;
+    public bool awaitingRespawn = false;
+    public TimeSince respawnTime;
 
     public Thing(short PosX, short PosY, int Facing, int ThingType, int Flags)
     {

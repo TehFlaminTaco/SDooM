@@ -15,6 +15,10 @@ public class ShotgunGuy : Monster {
 
     public override bool HasMissile => true;
 
+    public override string GetObituary( DoomPlayer victim, Entity murderWeapon ){
+        return $"{victim.Client?.Name??"Doomguy"} was shot by a Sergeant.";
+    }
+
     public override void OnDeath(DamageInfo hit){
         if(IsServer){
             var gun = new ShotgunPickup(){

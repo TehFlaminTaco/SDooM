@@ -26,7 +26,7 @@ partial class Chaingun : Weapon
 
 	public override void AttackPrimary()
 	{
-		if(Host.IsServer)DoomMap.GetSector(Owner.Position).PropogateSound(Owner);
+		if(Host.IsServer)DoomMap.GetSector(Owner.Position)?.PropogateSound(Owner);
 		refire = !refire;
 		TimeSincePrimaryAttack = 0;
 		TimeSinceSecondaryAttack = 0;

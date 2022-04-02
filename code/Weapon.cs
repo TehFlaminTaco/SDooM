@@ -172,6 +172,10 @@ public partial class Weapon : BaseWeapon, IUse
 					.WithWeapon( this );
 
 				tr.Entity.TakeDamage( damageInfo );
+
+				if(tr.Entity is LineMeshProp lmp){
+					lmp.OnShoot();
+				}
 			}
 		}
 	}
@@ -197,4 +201,10 @@ public partial class Weapon : BaseWeapon, IUse
 			ShootBullet( pos, dir.Forward, spread, force / numBullets, damage, bulletSize );
 		}
 	}
+
+	public virtual string GetObituary(DoomPlayer victim, DoomPlayer killer){
+		return $"{victim.Client?.Name??"Doomguy"} was fragged by {killer.Client?.Name??"Doomguy"} using the {this.GetType().Name}";
+	}
+
+	public virtual Vector3 ViewmodelOffset => new Vector3(0f,17f,0f);
 }

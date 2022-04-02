@@ -41,8 +41,6 @@ public class ViewModel : BaseViewModel
 		Position = camSetup.Position;
 		Rotation = camSetup.Rotation;
 
-		camSetup.ViewModel.FieldOfView = FieldOfView;
-
 		var playerVelocity = Local.Pawn.Velocity;
 
 		if ( Local.Pawn is Player player )
@@ -68,7 +66,9 @@ public class ViewModel : BaseViewModel
 		if(EnableSwingAndBob){
 			offset = CalcSwingOffset( pitchDelta, yawDelta );
 			offset += CalcBobbingOffset( playerVelocity );
-			offset += Vector3.Right * -17f;
+			if(Local.Pawn is Player ply && ply.ActiveChild is Weapon wep){
+				offset += wep.ViewmodelOffset;
+			}
 		}
 		Position += Rotation * offset;
 

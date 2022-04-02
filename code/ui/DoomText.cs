@@ -125,16 +125,16 @@ public class ChatTextLetter : Panel {
         if(letter=='|')
             tex = "STCFN121";
         if(letter == ' '){
-            Style.Width = 4 * DoomHud.LastHudScale;
-            Style.Height = 7 * DoomHud.LastHudScale;
+            Style.Width = 4 * DoomHud.LastTextScale;
+            Style.Height = 7 * DoomHud.LastTextScale;
             Style.Dirty();
             return;
         }
         if(TextureLoader2.UITextures.ContainsKey(tex)){
             var letterTex = TextureLoader2.Instance.GetUITexture(tex);
             Style.BackgroundImage = letterTex;
-            Style.Width = letterTex.Width * DoomHud.LastHudScale;
-            Style.Height = letterTex.Height * DoomHud.LastHudScale;
+            Style.Width = letterTex.Width * DoomHud.LastTextScale;
+            Style.Height = letterTex.Height * DoomHud.LastTextScale;
             if(letter == ',' || letter == '.' || letter == '_')
                 Style.AlignSelf = Align.FlexEnd;
             if(letter == '-')

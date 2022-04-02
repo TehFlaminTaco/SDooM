@@ -289,6 +289,12 @@ public class MapLoader
                     }
                     break;
 
+                case 103:{
+                    if (!Sector.TaggedSectors.ContainsKey(l.lineTag))
+                        break;
+                    break;
+                }
+
                 case 36:
                     {
                         if (!Sector.TaggedSectors.ContainsKey(l.lineTag))

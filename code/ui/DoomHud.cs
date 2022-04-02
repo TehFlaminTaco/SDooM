@@ -8,7 +8,11 @@ public partial class DoomHud : HudEntity<RootPanel> {
     [ConVar.ClientData("cl_hud_scale")]
     public static string _HudScale {get;set;} = "4.0";
     public static string HudScale => Local.Client!=null ? Local.Client.GetClientData("cl_hud_scale", "4.0") : "4.0";
+    [ConVar.ClientData("cl_text_scale")]
+    public static string _TextScale {get;set;} = "2.0";
+    public static string TextScale => Local.Client!=null ? Local.Client.GetClientData("cl_text_scale", "2.0") : "2.0";
     public static float LastHudScale = 0f;
+    public static float LastTextScale = 0f;
     public DoomHud(){
         Instance = this;
         if(TextureLoader2.Instance != null)
@@ -39,14 +43,23 @@ public partial class DoomHud : HudEntity<RootPanel> {
     }
 
     string lastScale = "";
+    string lastTextScale = "";
     [Event.Tick.Client]
     public void Tick(){
-        if(HudScale != lastScale && bar != null){
-            if(float.TryParse(HudScale, out float s)){
-                LastHudScale = s;
-                ResizeChildren(s);
+        if(bar != null){
+            if(HudScale != lastScale){
+                if(float.TryParse(HudScale, out float s)){
+                    LastHudScale = s;
+                    ResizeChildren(s);
+                }
+                lastScale = HudScale;
             }
-            lastScale = HudScale;
+            if(TextScale != lastTextScale){
+                if(float.TryParse(TextScale, out float s)){
+                    LastTextScale = s;
+                }
+                lastTextScale = TextScale;
+            }
         }
     }
 }
