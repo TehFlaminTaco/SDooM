@@ -35,6 +35,8 @@ public class DoomRocketLauncher : DoomGun {
                     }
                     case 8:{
                         if(IsServer){
+                            if(Owner is not DoomPlayer ply)break;
+                            if(ply.rocketAmmo <= 0)break;
                             SoundLoader.PlaySound("DSRLAUNC", Owner.Position);
                             DoomMap.GetSector(Owner.Position)?.PropogateSound(Owner);
                             var rocket = new RocketProjectile(){

@@ -24,6 +24,8 @@ public partial class DoomShotgun : DoomGun {
                         DoomHud.Instance.weaponSprite?.SetSprite("SHTGA0");
                         DoomHud.Instance.weaponSprite?.SetFlash("SHTFB0",15,22);
                         frameTicks = 7;
+                        if(Owner is not DoomPlayer ply)break;
+                        if(ply.shellAmmo <= 0)break;
                         if(Host.IsServer){
                             DoomMap.GetSector(Owner.Position)?.PropogateSound(Owner);
                             SoundLoader.PlaySound("DSSHOTGN", Owner.Position);

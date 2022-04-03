@@ -18,6 +18,6 @@
     ],
     "MapSelect": 1,
     "MinPlayers": 1,
-    "MaxPlayers": 4
+    "MaxPlayers": 16
   }
 }

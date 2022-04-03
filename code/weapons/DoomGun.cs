@@ -18,6 +18,7 @@ public partial class DoomGun : Weapon {
         if(!weaponDrawn){
             weaponDrawn = true;
             drawStart = 0;
+            DoomHud.Instance.weaponSprite?.SetFlash(null, 14, 21);
             OnTick();
             return;
         }else if(drawStart < 0.25f){ // TODO, Correct time?

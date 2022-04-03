@@ -28,6 +28,8 @@ public partial class DoomChaingun : DoomGun {
                         DoomHud.Instance.weaponSprite?.SetSprite("CHGGA0");
                         DoomHud.Instance.weaponSprite?.SetFlash("CHGFA0",14,19);
                         frameTicks = 4;
+                        if(Owner is not DoomPlayer ply)break;
+                        if(ply.bulletAmmo <= 0)break;
                         if(Host.IsServer){
                             DoomMap.GetSector(Owner.Position)?.PropogateSound(Owner);
                             SoundLoader.PlaySound("DSPISTOL", Owner.Position);
@@ -39,6 +41,8 @@ public partial class DoomChaingun : DoomGun {
                         DoomHud.Instance.weaponSprite?.SetSprite("CHGGB0");
                         DoomHud.Instance.weaponSprite?.SetFlash("CHGFB0",14,21);
                         frameTicks = 4;
+                        if(Owner is not DoomPlayer ply)break;
+                        if(ply.bulletAmmo <= 0)break;
                         if(Host.IsServer){
                             DoomMap.GetSector(Owner.Position)?.PropogateSound(Owner);
                             SoundLoader.PlaySound("DSPISTOL", Owner.Position);
