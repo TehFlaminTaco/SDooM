@@ -18,10 +18,16 @@ public partial class DoomGame : Sandbox.Game
 {
 	public static Random RNG = new();
 	public static bool DEATHMATCH = false;
+	[Net] public string TargetLevel {get;set;}
+	public static DoomGame Instance = null;
 	//public static WadReader ActiveWad = null;
 	public DoomGame()
 	{
-		if(IsServer)_ = new DoomHud();
+		Instance = this;
+		if(IsServer){
+			_ = new DoomHud();
+			TargetLevel ??= "E1M1";
+		}
 		string hostSide = Host.IsServer ? "SERVER": "CLIENT";
 		Log.Info($"Game Created on side {hostSide}");
 		LoadDoomMap();
@@ -32,6 +38,10 @@ public partial class DoomGame : Sandbox.Game
 	[Event.Hotload]
 	public void OnReload(){
 		LoadDoomMap();
+	}
+
+	public static bool LevelLoaded(){
+		return Instance.TargetLevel != null && WadLoader.Instance != null;
 	}
 
 	public static DoomMap MapEntity = null;
@@ -55,14 +65,41 @@ public partial class DoomGame : Sandbox.Game
 				material = Material.Load("materials/dev/fake_sky.vmat"),
 				overrideName = "F_SKY1"
 			};
-			MapLoader.Instance.Load("E1M1");
+			if(LevelLoaded())
+				MapLoader.Instance.Load(TargetLevel);
 		}
-		if(Host.IsServer){MapEntity = new DoomMap();}
+		if(Host.IsServer && LevelLoaded()){MapEntity = new DoomMap();}
 	}
 
 	[Event.Tick.Server]
 	public void ThingRespawner(){
 		if(DEATHMATCH)ThingGenerator.CheckItemRespawns();
+	}
+
+	public static void LoadLevel(string newLevel){
+		if(Host.IsServer){
+			Instance.TargetLevel = newLevel;
+			MapLoader.Instance.Load(newLevel);
+			UpdateLevelInfo(newLevel);
+			if(MapEntity!=null && MapEntity.IsValid)
+				MapEntity.Delete();
+			MapEntity = new DoomMap();
+		}
+	}
+	[ClientRpc]
+	public static void UpdateLevelInfo(string newLevel){
+		if(!Host.IsClient)return;
+		Instance.lastKnownLevel = newLevel;
+		MapLoader.Instance.Load(newLevel);
+	}
+
+	string lastKnownLevel = null;
+	[Event.Tick.Client]
+	public void LoadNewLevelData(){
+		if(LevelLoaded() && TargetLevel != lastKnownLevel){
+			lastKnownLevel = TargetLevel;
+			MapLoader.Instance.Load(TargetLevel);
+		}
 	}
 
 	/// <summary>

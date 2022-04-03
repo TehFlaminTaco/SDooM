@@ -14,7 +14,7 @@ public partial class HealthBonus : ThingEntity {
             if(ply==Local.Pawn)StatusText.AddChatEntry("","Picked up a health bonus.");
             ply.Health++;
             SoundLoader.PlaySound("DSITEMUP", Position);
-            ItemPickupFlash.DoFlash();
+            if(Local.Pawn==ply)ItemPickupFlash.DoFlash();
             if(IsServer)Delete();
         }
     }

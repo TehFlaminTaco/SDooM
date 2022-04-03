@@ -1,21 +1,22 @@
 using System.Linq;
 using Sandbox;
 
-public class ShellPickup : ThingEntity {
+public class BoxRocketPickup : ThingEntity {
     public override void Spawn(){
         base.Spawn();
         if(Host.IsServer){
-            SpriteName = "SHELA0";
+            SpriteName = "BROKA0";
         }
     }
     public override void OnTouched(DoomPlayer ply){
-        if(ply.shellAmmo < ply.AmmoMax(AmmoType.Shell)){
+        if(ply.shellAmmo < ply.AmmoMax(AmmoType.Rocket)){
             if(Host.IsServer){
-                ply.AddAmmo(AmmoType.Shell, 4);
+                ply.AddAmmo(AmmoType.Rocket, 10);
             }
             
             if(Local.Pawn==ply)ItemPickupFlash.DoFlash();
             if(IsServer)Delete();
         }
+        
     }
 }

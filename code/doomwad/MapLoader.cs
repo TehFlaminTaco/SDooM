@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System;
+using System.Linq;
 
 public class MapLoader 
 {
@@ -289,9 +290,11 @@ public class MapLoader
                     }
                     break;
 
-                case 103:{
+                case 103: case 46:{
                     if (!Sector.TaggedSectors.ContainsKey(l.lineTag))
                         break;
+                    foreach (Sector sector in Sector.TaggedSectors[l.lineTag])
+                        sector.maximumCeilingHeight = sector.Adjacent.Select(c=>c.ceilingHeight).Where(c=>c > sector.ceilingHeight).Min() - 4f;
                     break;
                 }
 
@@ -301,12 +304,11 @@ public class MapLoader
                             break;
 
                         foreach (Sector sector in Sector.TaggedSectors[l.lineTag])
-                            foreach (Sidedef s in sector.Sidedefs)
-                                if (s.Line.Front.Sector.floorHeight +_8units < sector.minimumFloorHeight)
-                                    sector.minimumFloorHeight = s.Line.Front.Sector.floorHeight + _8units;
+                            if(sector.Adjacent.Select(c=>c.floorHeight).Where(c=>c < sector.floorHeight).Any())
+                                sector.minimumFloorHeight = sector.Adjacent.Select(c=>c.floorHeight).Where(c=>c < sector.floorHeight).Max() + 1f;
+                        
                     }
                     break;
-
                 case 88:
                     {
                         if (!Sector.TaggedSectors.ContainsKey(l.lineTag))

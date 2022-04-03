@@ -15,7 +15,7 @@ public partial class MegaArmor : ThingEntity {
             ply.Armor = 200;
             ply.HasStrongArmor = true;
             SoundLoader.PlaySound("DSITEMUP", Position);
-            ItemPickupFlash.DoFlash();
+            if(Local.Pawn==ply)ItemPickupFlash.DoFlash();
             if(IsServer)Delete();
         }
     }

@@ -62,7 +62,14 @@ public class TextureLoader2
         "STDISK","STCDROM","STARMS",
         "STFB0","STFB1","STFB2","STFB3",
         "STPB0","STPB1","STPB2","STPB3",
-        "AMMNUM0","AMMNUM1","AMMNUM2","AMMNUM3","AMMNUM4","AMMNUM5","AMMNUM6","AMMNUM7","AMMNUM8","AMMNUM9"
+        "AMMNUM0","AMMNUM1","AMMNUM2","AMMNUM3","AMMNUM4","AMMNUM5","AMMNUM6","AMMNUM7","AMMNUM8","AMMNUM9",
+
+        "PISGA0","PISGB0","PISGC0","PISGD0","PISGE0","PISFA0",
+        "SHTGA0","SHTGB0","SHTGC0","SHTGD0","SHTGE0","SHTFA0","SHTFB0",
+        "CHGGA0","CHGGB0","CHGFA0","CHGFB0",
+        "PUNGA0","PUNGB0","PUNGC0","PUNGD0",
+        "SAWGA0","SAWGB0","SAWGC0","SAWGD0",
+        "MISGA0","MISGB0","MISFA0","MISFB0","MISFC0","MISFD0",
     };
     private static readonly Regex FaceImage = new(@"^STF");
 
@@ -169,7 +176,7 @@ public class TextureLoader2
 
             Texture tex = Texture.Create(width, height)
                 .WithFormat(ImageFormat.RGBA8888)
-                .WithData(pixels.SelectMany(c=>c.a<1.0?new byte[]{255,0,255,255}:new byte[]{(byte)(c.r*255), (byte)(c.g*255), (byte)(c.b*255), (byte)(c.a*255)}).ToArray())
+                .WithData(pixels.SelectMany(c=>c.a<1.0?new byte[]{255,0,255,0}:new byte[]{(byte)(c.r*255), (byte)(c.g*255), (byte)(c.b*255), (byte)(c.a*255)}).ToArray())
             .Finish();
             //tex.SetPixels(pixels);
             if (_overrideParameters.ContainsKey(l.lumpName))

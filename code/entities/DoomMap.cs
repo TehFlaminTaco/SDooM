@@ -26,7 +26,7 @@ public partial class DoomMap : Prop {
 
 	[Event.Tick]
 	public void MapTick(){
-		if(spawnThings && created > 5f){
+		if(spawnThings && created > 2f){
 			spawnThings = false;
 			ThingGenerator.GenerateThings();	
 		}
@@ -222,6 +222,7 @@ public static class Vector3Helper {
 
 public partial class MeshProp : Prop {
 	[Net] public bool solid {get; set;}
+	public Material meshMaterial = null;
 
 	public void Finish((Mesh mesh, List<VoxelVertex> points) mp){
 		if(mp.mesh is null)return;
@@ -262,7 +263,9 @@ public partial class LineMeshProp : MeshProp {
 	[Net] public bool isLoaded {get; set;}
 	public Linedef line {
 		get {
-			return MapLoader.linedefs[_line];
+			if(MapLoader.linedefs!=null && (MapLoader.linedefs.Count > _line))
+				return MapLoader.linedefs[_line];
+			return null;
 		}
 	}
 
@@ -282,7 +285,7 @@ public partial class LineMeshProp : MeshProp {
 	[Event( "client.tick" )]
 	public void Tick(){
 		if(MeshSetup)return;
-		if(isLoaded && (isSolidWall || isInvisibleBlocker || position > 0)){
+		if(isLoaded && (isSolidWall || isInvisibleBlocker || position > 0) && DoomGame.LevelLoaded() && line != null){
 			SetupMesh();
 			if(isSolidWall) line.SolidWallObject = this;
 			if(isInvisibleBlocker) line.InvisibleBlockerObject = this;
@@ -376,7 +379,7 @@ public partial class LineMeshProp : MeshProp {
 		);
 		else if(position == 1 && !isFront) mp = CreateLineQuad(
 			l.Back,
-			l.Back.Sector.floorHeight,
+			l.Back.Sector.minimumFloorHeight,
 			l.Front.Sector.floorHeight,
 			l.Back.tLow,
 			l.Back.offsetX,
@@ -450,14 +453,16 @@ public partial class LineMeshProp : MeshProp {
             tex = "DOORTRAK";
         Mesh mesh = new Mesh();
         Texture mainTexture = null;
-		Material mat;
+		Material mat = meshMaterial;
 		bool hasAlphaCut = false;
-        if (!MaterialManager.Instance.OverridesWall(tex, out var mr))
-            if (TextureLoader2.NeedsAlphacut.ContainsKey(tex))
-               	hasAlphaCut = true;
-            else
-                hasAlphaCut = false;
-		mat=mr;
+		if(mat == null){
+			if (!MaterialManager.Instance.OverridesWall(tex, out var mr))
+				if (TextureLoader2.NeedsAlphacut.ContainsKey(tex))
+					hasAlphaCut = true;
+				else
+					hasAlphaCut = false;
+			mat=mr;
+		}
 		
 		mainTexture = TextureLoader2.Instance.GetWallTexture(tex);
 		if(mat == null){
@@ -465,7 +470,7 @@ public partial class LineMeshProp : MeshProp {
 			mat.OverrideTexture("Color", mainTexture);
 			TextureAnimator.TryGenerateAnimator(this, mat, tex, TextureAnimator.Mode.WALL); // TODO: Don't do if already has an animator.
 		}
-		mesh.Material = mat;
+		meshMaterial = mesh.Material = mat;
         int vc = 4;
 
         Vector3[] vertices = new Vector3[vc];
@@ -490,7 +495,7 @@ public partial class LineMeshProp : MeshProp {
 
             if (peg == 2)
             {
-                float sheight = s.Sector.ceilingHeight - s.Sector.floorHeight;
+                float sheight = s.Sector.ceilingHeight - s.Sector.minimumFloorHeight;
                 float sv = sheight / ((float)mainTexture.Height / MapLoader.sizeDividor);
 
                 uvs[0] = new Vector2(ox, 1 - sv);
@@ -639,7 +644,9 @@ public partial class SectorMeshProp : MeshProp {
 	[Net] public bool isLoaded {get; set;}
 	public Sector sector {
 		get {
-			return MapLoader.sectors[_sector];
+			if(MapLoader.sectors!=null && MapLoader.sectors.Count > _sector)
+				return MapLoader.sectors[_sector];
+			return null;
 		}
 	}
 
@@ -660,7 +667,7 @@ public partial class SectorMeshProp : MeshProp {
 	[Event( "client.tick" )]
 	public void Tick(){
 		if(MeshSetup)return;
-		if(isLoaded && floor > 0){
+		if(isLoaded && floor > 0 && DoomGame.LevelLoaded() && sector != null){
 			if(floor == 1)sector.floorObject = this;
 			else sector.ceilingObject = this;
 			SetupMesh();
@@ -687,18 +694,20 @@ public partial class SectorMeshProp : MeshProp {
 		triangulator.Triangulate(s);
 		Mesh mesh = new Mesh();
 		Texture mainTexture = null;
-		Material mat;
-		if (!MaterialManager.Instance.OverridesFlat(isCeiling ? s.ceilingTexture : s.floorTexture, out var overrideMat))
-			mat = MaterialManager.Instance.defaultMaterial;
-		else
-			mat = overrideMat;
+		Material mat = meshMaterial;
+		if(meshMaterial == null){
+			if (!MaterialManager.Instance.OverridesFlat(isCeiling ? s.ceilingTexture : s.floorTexture, out var overrideMat))
+				mat = MaterialManager.Instance.defaultMaterial;
+			else
+				mat = overrideMat;
+		}
 		mainTexture = TextureLoader2.Instance.GetFlatTexture(isCeiling ? s.ceilingTexture : s.floorTexture);
 		if(mat == null){
 			mat = Material.Load("materials/pixelperfect.vmat").CreateCopy();
 			mat.OverrideTexture("Color", mainTexture);
 			TextureAnimator.TryGenerateAnimator(this, mat, isCeiling ? s.ceilingTexture : s.floorTexture, TextureAnimator.Mode.FLAT);
 		}
-		mesh.Material = mat;
+		meshMaterial = mesh.Material = mat;
 		int vc = Triangulator2.vertices.Count;
 
 		Vector3[] vertices = new Vector3[vc];

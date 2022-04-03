@@ -1,0 +1,10 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v4.1.0)
+
+newmtl MD3_[default][Group]
+Kd 1 1 1
+Ka 0.05000000074505806 0.05000000074505806 0.05000000074505806
+Ks 1 1 1
+illum 1
+map_Kd Gsaw.pcx
+

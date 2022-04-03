@@ -1,9 +1,14 @@
+using System.Linq;
 using Sandbox;
 
 public class ThingGenerator {
     public static void GenerateThings(){
         foreach(var thing in MapLoader.things){
             GenerateThing(thing);
+        }
+        foreach(var ply in Entity.All.OfType<DoomPlayer>()){
+            ply.Velocity = Vector3.Zero;
+            DoomGame.Instance.MoveToSpawnpoint(ply);
         }
     }
 
@@ -76,6 +81,12 @@ public class ThingGenerator {
                     Rotation = Rotation.FromYaw(thing.facing)
                 };
                 break;
+            case 0x8: // Backpack
+                thing.ent=new Backpack(){
+                    Position = DoomMap.ToMapLocation(new Vector2(thing.posX, thing.posY)),
+                    Rotation = Rotation.FromYaw(thing.facing)
+                };
+                break;
             case 0x7D1: // Shotgun
                 thing.ent=new ShotgunPickup(){
                     Position = DoomMap.ToMapLocation(new Vector2(thing.posX, thing.posY)),
@@ -84,6 +95,18 @@ public class ThingGenerator {
                 break;
             case 0x7D2: // Chaingun
                 thing.ent=new ChaingunPickup(){
+                    Position = DoomMap.ToMapLocation(new Vector2(thing.posX, thing.posY)),
+                    Rotation = Rotation.FromYaw(thing.facing)
+                };
+                break;
+            case 0x7D3: // RocketLauncher
+                thing.ent=new RocketLauncherPickup(){
+                    Position = DoomMap.ToMapLocation(new Vector2(thing.posX, thing.posY)),
+                    Rotation = Rotation.FromYaw(thing.facing)
+                };
+                break;
+            case 0x7D5: // Chainsaw
+                thing.ent=new ChainsawPickup(){
                     Position = DoomMap.ToMapLocation(new Vector2(thing.posX, thing.posY)),
                     Rotation = Rotation.FromYaw(thing.facing)
                 };
@@ -108,6 +131,12 @@ public class ThingGenerator {
                 break;
             case 0x7DC: // Medkit
                 thing.ent=new Medkit(){
+                    Position = DoomMap.ToMapLocation(new Vector2(thing.posX, thing.posY)),
+                    Rotation = Rotation.FromYaw(thing.facing)
+                };
+                break;
+            case 0x7DD: // Supercharge
+                thing.ent=new Supercharge(){
                     Position = DoomMap.ToMapLocation(new Vector2(thing.posX, thing.posY)),
                     Rotation = Rotation.FromYaw(thing.facing)
                 };
@@ -138,6 +167,12 @@ public class ThingGenerator {
                 break;
             case 0x7F3: // Barrel
                 thing.ent=new Barrel(){ 
+                    Position = DoomMap.ToMapLocation(new Vector2(thing.posX, thing.posY)),
+                    Rotation = Rotation.FromYaw(thing.facing)
+                };
+                break;
+            case 0x7FE: // BoxRocketPickup
+                thing.ent=new BoxRocketPickup(){ 
                     Position = DoomMap.ToMapLocation(new Vector2(thing.posX, thing.posY)),
                     Rotation = Rotation.FromYaw(thing.facing)
                 };

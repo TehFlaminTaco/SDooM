@@ -15,7 +15,7 @@ public partial class Medkit : ThingEntity {
             ply.Health+=25;
             if(ply.Health > 100)ply.Health = 100;
             SoundLoader.PlaySound("DSITEMUP", Position);
-            ItemPickupFlash.DoFlash();
+            if(Local.Pawn==ply)ItemPickupFlash.DoFlash();
             if(IsServer)Delete();
         }
     }

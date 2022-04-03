@@ -18,7 +18,7 @@ public class ClipPickup : ThingEntity {
                 SoundLoader.PlaySound("DSITEMUP", Position);
             }
             
-            ItemPickupFlash.DoFlash();
+            if(Local.Pawn==ply)ItemPickupFlash.DoFlash();
             if(IsServer)Delete();
         }
     }

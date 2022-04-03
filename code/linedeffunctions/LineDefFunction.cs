@@ -45,6 +45,7 @@ public partial class LineMeshProp : IUse{
 							Parent = line.gameObjects.Where(c=>c!=null).First(),
 							line = line
 						};
+						DoomGame.LoadLevel("E1M2");
 						//DoomGame.ChangeLevel("E1M2");
 						// TODO: Level changing.
 					}
@@ -67,6 +68,37 @@ public partial class LineMeshProp : IUse{
 							Parent = line.gameObjects.Where(c=>c!=null).First(),
 							line = line,
 							Stay = true
+						};
+					}
+					break;
+				}
+				case 9:{ // S1 Donut
+					if(line.Switcher == null || !line.Switcher.IsValid){
+						var sec = MapLoader.sectors.Where(c=>c.tag == line.lineTag);
+						if(!sec.Any())return false;
+						foreach(var s in sec){
+							if(s.mover == null || !s.mover.IsValid){
+								var dnt = s.Sidedefs.Select(c=>c.Other).Where(c=>c!=null).First().Sector;
+								var mdl = dnt.Sidedefs.Select(c=>c.Other).Where(c=>c!=null && c.Sector!=s).First().Sector;
+								s.mover = new Donut(){
+									Parent = s.floorObject,
+									sector = s,
+									isPillar = true,
+									isFloor = true,
+									modelSector = mdl
+								};
+								dnt.mover = new Donut(){
+									Parent = dnt.floorObject,
+									sector = dnt,
+									isPillar = false,
+									isFloor = true,
+									modelSector = mdl
+								};
+							}
+						}
+						line.Switcher=new LineSwitch(){
+							Parent = line.gameObjects.Where(c=>c!=null).First(),
+							line = line
 						};
 					}
 					break;

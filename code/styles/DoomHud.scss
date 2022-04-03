@@ -1,3 +1,8 @@
+RootPanel {
+    display:flex;
+    flex-direction: column-reverse;
+}
+
 ItemPickupFlash{
     position:absolute;
     width:100%;
@@ -16,6 +21,7 @@ DamageFlash{
 }
 
 StatusText {
+    position:absolute;
     display:flex;
     flex-direction:column;
     align-items: flex-start;
@@ -78,19 +84,19 @@ StatusText {
 }
 
 UIBar {
-    position:absolute;
     bottom:0;
     left:0;
     right:0;
     display:flex;
     justify-content: space-around;
-    background-color:#1b1b1b;
+    background-color:#1b1b1b00;
     z-index:2;
     StatusBar{
         background-size:contain;
         image-rendering:pixelated;
 
         KeycardDisplay{
+            position:absolute;
             background-size:contain;
             image-rendering:pixelated;
             left:74.6875%;
@@ -190,4 +196,25 @@ UIBar {
             }
         }
     }
+}
+
+WeaponSprite {
+    z-index:1;
+    left:0px;
+    width:100%;
+    height: 512px;
+    .gun {
+        position: absolute;
+        bottom:0;
+        right:50%;
+        background-size: contain;
+        image-rendering: pixelated;
+        .flash{
+            position: absolute;
+            opacity:1;
+            background-size: contain;
+            image-rendering: pixelated;
+        }
+    }
+    
 }

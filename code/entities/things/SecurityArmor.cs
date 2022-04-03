@@ -14,7 +14,7 @@ public partial class SecurityArmor : ThingEntity {
             if(ply==Local.Pawn)StatusText.AddChatEntry("","Picked up the armor.");
             ply.Armor = 100;
             SoundLoader.PlaySound("DSITEMUP", Position);
-            ItemPickupFlash.DoFlash();
+            if(Local.Pawn==ply)ItemPickupFlash.DoFlash();
             if(IsServer)Delete();
         }
     }

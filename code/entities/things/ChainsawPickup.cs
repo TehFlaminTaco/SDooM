@@ -1,20 +1,20 @@
 using System.Linq;
 using Sandbox;
 
-public class ChaingunPickup : ThingEntity {
+public class ChainsawPickup : ThingEntity {
     public override void Spawn(){
         base.Spawn();
         if(Host.IsServer){
-            SpriteName = "MGUNA0";
+            SpriteName = "CSAWA0";
         }
     }
     public override void OnTouched(DoomPlayer ply){
-        bool hasWep = (ply.Inventory as Inventory).All().OfType<DoomChaingun>().Any();
+        bool hasWep = (ply.Inventory as Inventory).All().OfType<DoomChainsaw>().Any();
         if(ply.AmmoCount(AmmoType.Bullet)>=ply.AmmoMax(AmmoType.Bullet) && hasWep)return;
-        if(ply==Local.Pawn)StatusText.AddChatEntry("","Got the chaingun!");
+        if(ply==Local.Pawn)StatusText.AddChatEntry("","A Chainsaw! Find some meat!");
         if(Host.IsServer){
             if(!hasWep){
-                var sgun = new DoomChaingun();
+                var sgun = new DoomChainsaw();
                 ply.Inventory.Add(sgun);
                 ply.ActiveChild = sgun;
                 SoundLoader.PlaySound("DSWPNUP", Position);

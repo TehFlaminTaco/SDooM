@@ -105,11 +105,8 @@ public partial class DoomPlayer : Player
 		//if(IsClient)
 		//	InventoryBar.Instance.ReBuild();
 
-		//Inventory.Add( new Pistol() );
-		Inventory.Add( new Fists() );
-		//Inventory.Add( new Shotgun() );
-		//Inventory.Add( new Chaingun() );
-        var pistol = new Pistol();
+		Inventory.Add( new DoomFist() );
+        var pistol = new DoomPistol();
 		Inventory.Add( pistol );
         ActiveChild = pistol;
 
@@ -311,6 +308,8 @@ public partial class DoomPlayer : Player
 			}
 		}
 		DoomGame.RNG = new System.Random(Time.Tick);
+		for(int i=0; i < 30; i++)
+			DoomGame.RNG.Next();
 		lastEyeTrace = null;
 		base.Simulate( cl );
 		if(IsServer && MainCamera is ThirdPersonCameraTracked tr)tr.Update();

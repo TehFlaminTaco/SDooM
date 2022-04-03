@@ -16,9 +16,10 @@ public partial class ThingEntity : Prop {
     public bool FlipUV = false;
 
     [Net, Predicted] public string SpriteName {get;set;}
+    [Net] public bool ForceFacing {get;set;}
     [Event.Frame]
     public void OnFrame(){
-        if(DrawBillboard()){
+        if(DrawBillboard() && SpriteName != null){
             if(sprite==null || !sprite.IsValid){
                 sprite = new();
                 sprite.Parent = this;
@@ -26,7 +27,12 @@ public partial class ThingEntity : Prop {
             }
             sprite.SpriteCentered = SpriteCentered;
             sprite.FullBright = FullBright;
-            sprite.SetSprite(SpriteName, FlipUV);
+            if(ForceFacing){
+                char frameName = SpriteName[^2];
+                sprite.SetSprite(SpriteName[0..(SpriteName.Length-1)] + Facing(frameName), FlipUV);
+            }else{
+                sprite.SetSprite(SpriteName, FlipUV);
+            }
         }else{
             // Destroy billboard if it exists
             if(sprite!=null && sprite.IsValid){
@@ -34,6 +40,19 @@ public partial class ThingEntity : Prop {
                 sprite = null;
             }
         }
+    }
+    public string Facing(char frameName){
+        if(Local.Pawn is not DoomPlayer ply)return "1";
+        if(!ply.IsValid || !IsValid)return "1";
+        var ang = Rotation.LookAt(ply.Position - Position).Angles().yaw - Rotation.Angles().yaw;
+        while(ang<-180)ang+=360;
+        while(ang>180)ang-=360;
+        ang = -ang;
+        FlipUV = ang<=-22.5;
+        int angIndex = (int)Math.Floor(Math.Abs(ang)/45f + 0.5f);
+        if(angIndex == 0)return "1";
+        if(angIndex == 4)return "5";
+        return $"{9-angIndex}{frameName}{angIndex+1}";
     }
 
 	public virtual string GetObituary( DoomPlayer victim, Entity murderWeapon ){

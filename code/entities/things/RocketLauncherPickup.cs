@@ -1,20 +1,20 @@
 using System.Linq;
 using Sandbox;
 
-public class ChaingunPickup : ThingEntity {
+public class RocketLauncherPickup : ThingEntity {
     public override void Spawn(){
         base.Spawn();
         if(Host.IsServer){
-            SpriteName = "MGUNA0";
+            SpriteName = "LAUNA0";
         }
     }
     public override void OnTouched(DoomPlayer ply){
-        bool hasWep = (ply.Inventory as Inventory).All().OfType<DoomChaingun>().Any();
-        if(ply.AmmoCount(AmmoType.Bullet)>=ply.AmmoMax(AmmoType.Bullet) && hasWep)return;
-        if(ply==Local.Pawn)StatusText.AddChatEntry("","Got the chaingun!");
+        bool hasWep = (ply.Inventory as Inventory).All().OfType<DoomRocketLauncher>().Any();
+        if(ply.AmmoCount(AmmoType.Rocket)>=ply.AmmoMax(AmmoType.Rocket) && hasWep)return;
+        if(ply==Local.Pawn)StatusText.AddChatEntry("","Got the rocket launcher!");
         if(Host.IsServer){
             if(!hasWep){
-                var sgun = new DoomChaingun();
+                var sgun = new DoomRocketLauncher();
                 ply.Inventory.Add(sgun);
                 ply.ActiveChild = sgun;
                 SoundLoader.PlaySound("DSWPNUP", Position);
@@ -22,7 +22,7 @@ public class ChaingunPickup : ThingEntity {
             }else{
                 SoundLoader.PlaySound("DSITEMUP", Position);
             }
-            ply.AddAmmo(AmmoType.Bullet, 20);
+            ply.AddAmmo(AmmoType.Rocket, 2);
         }
         
         if(Local.Pawn==ply)ItemPickupFlash.DoFlash();

@@ -14,7 +14,7 @@ public class BoxShellPickup : ThingEntity {
                 ply.AddAmmo(AmmoType.Shell, 20);
             }
             
-            ItemPickupFlash.DoFlash();
+            if(Local.Pawn==ply)ItemPickupFlash.DoFlash();
             if(IsServer)Delete();
         }
         

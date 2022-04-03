@@ -6,7 +6,7 @@ using Sandbox.UI;
 
 public class StatusBar : Panel {
     Face face;
-    Arms arms;
+    public Arms arms;
     DoomTextBig health;
     DoomTextBig armor;
     DoomTextBig ammo;

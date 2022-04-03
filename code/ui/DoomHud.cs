@@ -21,8 +21,9 @@ public partial class DoomHud : HudEntity<RootPanel> {
 
     ItemPickupFlash itemFlash;
     DamageFlash damageFlash;
-    UIBar bar;
+    public UIBar bar;
     StatusText statusText;
+    public WeaponSprite weaponSprite;
     bool isBuilt = false;
     public void Build(){
         if(!IsClient)
@@ -36,10 +37,12 @@ public partial class DoomHud : HudEntity<RootPanel> {
         itemFlash = RootPanel.AddChild<ItemPickupFlash>();
         damageFlash = RootPanel.AddChild<DamageFlash>();
         statusText = RootPanel.AddChild<StatusText>();
+        weaponSprite = RootPanel.AddChild<WeaponSprite>();
     }
 
     public void ResizeChildren(float scale){
         bar.ResizeChildren(scale);
+        weaponSprite.ResizeChildren(scale);
     }
 
     string lastScale = "";

@@ -27,10 +27,11 @@ public class MonsterProjectile : ThingEntity {
     public int spriteIndex = 0;
     public TimeSince lastFrame = 0;
     public TimeSince lastTick = 0;
+    public int frameTime = 1;
     [Event.Tick.Server]
     public void AnimationAndExplosion(){
         if(lastTick > 0 && sequence != DeathSequence){
-            lastTick = -1f/35f;
+            lastTick = -frameTime/35f;
             var tr = Trace.Box(CollisionBounds, Position, Position + Velocity)
                 .HitLayer(CollisionLayer.Player)
                 .HitLayer(CollisionLayer.NPC)
@@ -39,13 +40,8 @@ public class MonsterProjectile : ThingEntity {
                 .Ignore(Attacker)
             .Run();
             if(tr.Hit){
-                if(ImpactSound != null){
-                    SoundLoader.PlaySound(ImpactSound, Position);
-                }
                 if(sequence != DeathSequence){
-                    sequence = DeathSequence;
-                    spriteIndex = 0;
-                    tr.Entity.TakeDamage(DamageInfo.Generic(Damage).WithAttacker(Attacker).WithWeapon(this));
+                    OnHit(tr);
                 }
             }else{
                 Position = tr.EndPosition;
@@ -60,5 +56,14 @@ public class MonsterProjectile : ThingEntity {
                 spriteIndex = 0;
             }
         }
+    }
+
+    public virtual void OnHit(TraceResult tr){
+        if(ImpactSound != null){
+            SoundLoader.PlaySound(ImpactSound, Position);
+        }
+        sequence = DeathSequence;
+        spriteIndex = 0;
+        tr.Entity.TakeDamage(DamageInfo.Generic(Damage).WithAttacker(Attacker).WithWeapon(this));
     }
 }

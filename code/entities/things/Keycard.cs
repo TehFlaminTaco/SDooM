@@ -38,7 +38,7 @@ public class Keycard : ThingEntity {
                 2 => "Picked up a red keycard.",
                 _ => "Picked up a fucked keycard."
             });
-            ItemPickupFlash.DoFlash();
+            if(Local.Pawn==ply)ItemPickupFlash.DoFlash();
         }else{
             // Play pickup sound
             SoundLoader.PlaySound("DSITEMUP", Position);

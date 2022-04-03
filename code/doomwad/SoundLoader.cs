@@ -6,7 +6,10 @@ public partial class SoundLoader
     //work in progress, but shows how to load sound from WAD
 
     [ClientRpc]
-    public static void PlaySound(string soundName, Vector3 pos)
+    public static void PlaySound(string soundName, Vector3 pos){
+        PlaySoundClientside(soundName, pos);
+    }
+    public static (Sound?, SoundStream?) PlaySoundClientside(string soundName, Vector3 pos)
     {
         foreach (Lump l in WadLoader.lumps)
         {
@@ -18,7 +21,7 @@ public partial class SoundLoader
             if (format != 3)
             {
                 Log.Info("SoundLoader: LoadSound: \"" + soundName + "\" format != 3 (" + format + ")");
-                return;
+                return (null, null);
             }
 
             int samplerate = l.data[p++] | ((int)l.data[p++]) << 8;
@@ -33,12 +36,16 @@ public partial class SoundLoader
             }
             //var strm = Sound.FromScreen("").CreateStream(samplerate, 1);
             var snd = Sound.FromWorld("audiostreamlong", pos);
-            var strm = snd.CreateStream(samplerate, 1);
-            strm.WriteData(samples);
-            return;
+            try{
+                var strm = snd.CreateStream(samplerate, 1);
+                strm.WriteData(samples);
+                return (snd, strm);
+            }catch(Exception){// There's a race condition here...
+                return (null,null);
+            }
         }
 
         Log.Info("SoundLoader: LoadSound: Could not find sound \"" + soundName + "\"");
-        return;
+        return (null, null);
     }
 }
