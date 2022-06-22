@@ -61,10 +61,10 @@ public partial class LineMeshProp : IUse{
 								DoomGame.LoadLevel("E1M2");
 								break;
 							case "E1M2":
-								DoomGame.LoadLevel("E1M3");
+								StatusText.AddChatEntry("", "Thanks for playing!");
 								break;
 							case "E1M3":
-								StatusText.AddChatEntry("", "Thanks for playing!");
+								DoomGame.LoadLevel("E1M3");
 								break;
 						}
 					}
