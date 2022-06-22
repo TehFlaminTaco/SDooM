@@ -71,7 +71,7 @@ public partial class StatusText : Panel {
     }
 
 
-    [ClientCmd( "chat_add", CanBeCalledFromServer = true )]
+    [ConCmd.Client( "chat_add", CanBeCalledFromServer = true )]
     public static void AddChatEntry( string name, string message, string avatar = null, string lobbyState = null )
     {
         Current?.AddEntry( name, message, avatar, lobbyState );
@@ -83,13 +83,13 @@ public partial class StatusText : Panel {
         }
     }
 
-    [ClientCmd( "chat_addinfo", CanBeCalledFromServer = true )]
+    [ConCmd.Client( "chat_addinfo", CanBeCalledFromServer = true )]
     public static void AddInformation( string message, string avatar = null )
     {
         Current?.AddEntry( null, message, avatar );
     }
 
-    [ServerCmd( "say" )]
+    [ConCmd.Server( "say" )]
     public static void Say( string message )
     {
         Assert.NotNull( ConsoleSystem.Caller );

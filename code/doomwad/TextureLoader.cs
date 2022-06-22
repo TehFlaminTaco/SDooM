@@ -123,6 +123,10 @@ public class TextureLoader2
     }
     public Texture GetUITexture(string textureName)
     {
+        if(DoomGame.TERRYHUD && textureName.StartsWith("STFST")){
+            return Texture.Load(FileSystem.Mounted, "materials\\face\\" + textureName + ".png");
+        }
+
         if (OverrideSprites.ContainsKey(textureName))
             return OverrideSprites[textureName];
 

@@ -18,6 +18,7 @@ public partial class DoomGame : Sandbox.Game
 {
 	public static Random RNG = new();
 	public static bool DEATHMATCH = false;
+	public static bool TERRYHUD = false;
 	[Net] public string TargetLevel {get;set;}
 	public static DoomGame Instance = null;
 	//public static WadReader ActiveWad = null;
@@ -73,9 +74,16 @@ public partial class DoomGame : Sandbox.Game
 
 	[Event.Tick.Server]
 	public void ThingRespawner(){
+		if(doRespawnMap && lastMapReload >= 1.0f){
+			MapEntity = new DoomMap();
+			lastMapReload = -1f;
+			doRespawnMap = false;
+		}
 		if(DEATHMATCH)ThingGenerator.CheckItemRespawns();
 	}
 
+	static TimeSince lastMapReload = 0;
+	static bool doRespawnMap = false;
 	public static void LoadLevel(string newLevel){
 		if(Host.IsServer){
 			Instance.TargetLevel = newLevel;
@@ -83,7 +91,9 @@ public partial class DoomGame : Sandbox.Game
 			UpdateLevelInfo(newLevel);
 			if(MapEntity!=null && MapEntity.IsValid)
 				MapEntity.Delete();
-			MapEntity = new DoomMap();
+			//MapEntity = new DoomMap();
+			doRespawnMap = true;
+			lastMapReload = 0f;
 		}
 	}
 	[ClientRpc]

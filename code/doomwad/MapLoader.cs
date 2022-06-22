@@ -49,9 +49,12 @@ public class MapLoader
     public static int maxY = int.MinValue;
     public static int minZ = int.MaxValue;
     public static int maxZ = int.MinValue;
-
+    public static bool Loading = true;
+    public static string MapName = "";
     public bool Load(string mapName)
     {
+        MapName = mapName;
+        Loading = true;
         if (WadLoader.lumps.Count == 0)
         {
             Log.Error("MapLoader: Load: WadLoader.lumps == 0");
@@ -282,6 +285,7 @@ public class MapLoader
                 case 26: //keycard doors
                 case 27:
                 case 28:
+                case 31: // D1 Door open stay
                     {
                         if (l.Back != null)
                             if (l.Back.Sector.maximumCeilingHeight == l.Back.Sector.ceilingHeight
@@ -325,7 +329,7 @@ public class MapLoader
         }
 
         Log.Info("Loaded map \"" + mapName + "\"");
-
+        Loading = false;
         return true;
     }
 

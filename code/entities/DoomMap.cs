@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Sandbox;
-[Library( "ent_doommap", Title = "Doom Map", Spawnable = false)]
+[Library( "ent_doommap", Title = "Doom Map" )]
 public partial class DoomMap : Prop {
 	//public WadLoader MapData;
 	TimeSince created = 0;
@@ -285,7 +285,7 @@ public partial class LineMeshProp : MeshProp {
 	[Event( "client.tick" )]
 	public void Tick(){
 		if(MeshSetup)return;
-		if(isLoaded && (isSolidWall || isInvisibleBlocker || position > 0) && DoomGame.LevelLoaded() && line != null){
+		if(isLoaded && (isSolidWall || isInvisibleBlocker || position > 0) && DoomGame.LevelLoaded() && line != null && !MapLoader.Loading){
 			SetupMesh();
 			if(isSolidWall) line.SolidWallObject = this;
 			if(isInvisibleBlocker) line.InvisibleBlockerObject = this;
@@ -468,7 +468,8 @@ public partial class LineMeshProp : MeshProp {
 		if(mat == null){
 			mat = Material.Load(hasAlphaCut ? "materials/pixelperfect.vmat" : "materials/pixelperfectnoalpha.vmat").CreateCopy();
 			mat.OverrideTexture("Color", mainTexture);
-			TextureAnimator.TryGenerateAnimator(this, mat, tex, TextureAnimator.Mode.WALL); // TODO: Don't do if already has an animator.
+			if(IsClient)
+				TextureAnimator.TryGenerateAnimator(this, mat, tex, TextureAnimator.Mode.WALL); // TODO: Don't do if already has an animator.
 		}
 		meshMaterial = mesh.Material = mat;
         int vc = 4;
@@ -667,7 +668,7 @@ public partial class SectorMeshProp : MeshProp {
 	[Event( "client.tick" )]
 	public void Tick(){
 		if(MeshSetup)return;
-		if(isLoaded && floor > 0 && DoomGame.LevelLoaded() && sector != null){
+		if(isLoaded && floor > 0 && DoomGame.LevelLoaded() && sector != null && !MapLoader.Loading){
 			if(floor == 1)sector.floorObject = this;
 			else sector.ceilingObject = this;
 			SetupMesh();
@@ -705,7 +706,8 @@ public partial class SectorMeshProp : MeshProp {
 		if(mat == null){
 			mat = Material.Load("materials/pixelperfect.vmat").CreateCopy();
 			mat.OverrideTexture("Color", mainTexture);
-			TextureAnimator.TryGenerateAnimator(this, mat, isCeiling ? s.ceilingTexture : s.floorTexture, TextureAnimator.Mode.FLAT);
+			if(IsClient)
+				TextureAnimator.TryGenerateAnimator(this, mat, isCeiling ? s.ceilingTexture : s.floorTexture, TextureAnimator.Mode.FLAT);
 		}
 		meshMaterial = mesh.Material = mat;
 		int vc = Triangulator2.vertices.Count;

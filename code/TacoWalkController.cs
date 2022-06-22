@@ -237,8 +237,8 @@ namespace Sandbox
 						Sound.FromEntity("SandboxPlayer.FallDamage", Pawn);
 						if(Local.Pawn is null)
                         	Pawn.TakeDamage(DamageInfo.Generic(-InitialVelocity.z / 40f));
-						else if(Local.Pawn == Pawn)
-							_=new Sandbox.ScreenShake.Perlin(0.5f, 0.1f, 80f, 0.6f);
+						//else if(Local.Pawn == Pawn)
+						//	_=new Sandbox.ScreenShake.Perlin(0.5f, 0.1f, 80f, 0.6f);
                     }
                 }//Log.Info($"{InitialVelocity}, {Local.Pawn is null}");
 				Velocity = Velocity.WithZ( 0 );
@@ -259,12 +259,12 @@ namespace Sandbox
 				var lineOffset = 0;
 				if ( Host.IsServer ) lineOffset = 10;
 
-				DebugOverlay.ScreenText( lineOffset + 0, $"        Position: {Position}" );
-				DebugOverlay.ScreenText( lineOffset + 1, $"        Velocity: {Velocity}" );
-				DebugOverlay.ScreenText( lineOffset + 2, $"    BaseVelocity: {BaseVelocity}" );
-				DebugOverlay.ScreenText( lineOffset + 3, $"    GroundEntity: {GroundEntity} [{GroundEntity?.Velocity}]" );
-				DebugOverlay.ScreenText( lineOffset + 4, $" SurfaceFriction: {SurfaceFriction}" );
-				DebugOverlay.ScreenText( lineOffset + 5, $"    WishVelocity: {WishVelocity}" );
+				//DebugOverlay.ScreenText( lineOffset + 0, $"        Position: {Position}" );
+				//DebugOverlay.ScreenText( lineOffset + 1, $"        Velocity: {Velocity}" );
+				//DebugOverlay.ScreenText( lineOffset + 2, $"    BaseVelocity: {BaseVelocity}" );
+				//DebugOverlay.ScreenText( lineOffset + 3, $"    GroundEntity: {GroundEntity} [{GroundEntity?.Velocity}]" );
+				//DebugOverlay.ScreenText( lineOffset + 4, $" SurfaceFriction: {SurfaceFriction}" );
+				//DebugOverlay.ScreenText( lineOffset + 5, $"    WishVelocity: {WishVelocity}" );
 			}
 
 		}

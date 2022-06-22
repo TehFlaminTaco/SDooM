@@ -99,22 +99,6 @@ public partial class Weapon : BaseWeapon, IUse
 		Delete();
 	}
 
-	[ClientRpc]
-	protected virtual void ShootEffects()
-	{
-		Host.AssertClient();
-
-		Particles.Create( "particles/pistol_muzzleflash.vpcf", EffectEntity, "muzzle" );
-
-		if ( IsLocalPawn )
-		{
-			_ = new Sandbox.ScreenShake.Perlin();
-		}
-
-		ViewModelEntity?.SetAnimParameter( "fire", true );
-		CrosshairPanel?.CreateEvent( "fire" );
-	}
-
 	public override IEnumerable<TraceResult> TraceBullet( Vector3 start, Vector3 end, float radius = 2.0f ){
 		bool InWater = Map.Physics.IsPointWater( start );
 
@@ -138,7 +122,7 @@ public partial class Weapon : BaseWeapon, IUse
 	/// <summary>
 	/// Shoot a single bullet
 	/// </summary>
-	private static Surface FleshSurface = Asset.FromPath<Surface>("surfaces/flesh.surface");
+	private static Surface FleshSurface = ResourceLibrary.Get<Surface>("surfaces/flesh.surface");
 	public virtual void ShootBullet( Vector3 pos, Vector3 dir, Vector2 spread, float force, float damage, float bulletSize )
 	{
 		var forward = dir;
@@ -152,7 +136,7 @@ public partial class Weapon : BaseWeapon, IUse
 		//
 		foreach ( var tr in TraceBullet( pos, pos + forward * 5000, bulletSize ) )
 		{
-			FleshSurface ??= Asset.FromPath<Surface>("surfaces/flesh.surface");
+			FleshSurface ??= ResourceLibrary.Get<Surface>("surfaces/flesh.surface");
 			if(tr.Entity is Monster)
 				FleshSurface.DoBulletImpact(tr);
 			else

@@ -383,6 +383,7 @@ public partial class Monster : ThingEntity {
         frameName = 'L';
         currentState = MonsterState.Dead;
         SetState(MonsterState.Dead);
+        animationTime = 9000;
     }
 
     public virtual IEnumerator StateXDeath() {
@@ -407,6 +408,7 @@ public partial class Monster : ThingEntity {
         frameName = 'U';
         currentState = MonsterState.Dead;
         SetState(MonsterState.Dead);
+        animationTime = 9000;
     }
 
     public virtual IEnumerator StateRaise() {
@@ -487,7 +489,7 @@ public partial class Monster : ThingEntity {
 	/// <summary>
 	/// Shoot a single bullet
 	/// </summary>
-	private static Surface FleshSurface = Asset.FromPath<Surface>("surfaces/flesh.surface");
+	private static Surface FleshSurface = ResourceLibrary.Get<Surface>("surfaces/flesh.surface");
 	public virtual void ShootBullet( Vector3 pos, Vector3 dir, Vector2 spread, float force, float damage, float bulletSize )
 	{
 		var forward = dir;
@@ -501,7 +503,7 @@ public partial class Monster : ThingEntity {
 		//
 		foreach ( var tr in TraceBullet( pos, pos + forward * 5000, bulletSize ) )
 		{
-			FleshSurface ??= Asset.FromPath<Surface>("surfaces/flesh.surface");
+			FleshSurface ??= ResourceLibrary.Get<Surface>("surfaces/flesh.surface");
 			if(tr.Entity is Monster)
 				FleshSurface.DoBulletImpact(tr);
 			else

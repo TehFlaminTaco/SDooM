@@ -52,8 +52,12 @@ public partial class TextureAnimator : Entity{
             animator.Parent = parent;
         }
     }
-
-    public TextureAnimator(Material material, string name, Mode isFlat, int tpf){
+    public TextureAnimator(){
+        if(IsServer){
+            Log.Error("This shouldn't happen!");
+        }
+    }
+    public TextureAnimator(Material material, string name, Mode isFlat, int tpf): this(){
         Material = material;
         TicksPerFrame = tpf;
         string[] newTextures;

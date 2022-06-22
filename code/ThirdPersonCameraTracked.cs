@@ -12,11 +12,11 @@ namespace Sandbox
 		private Angles orbitAngles;
 		private float orbitDistance = 150;
 
-        public AnimEntity Pawn;
+        public AnimatedEntity Pawn;
 
 		public override void Update()
 		{
-			var pawn = Pawn ?? Local.Pawn as AnimEntity;
+			var pawn = Pawn ?? Local.Pawn as AnimatedEntity;
 			var client = Local.Client;
 
 			if ( pawn == null )
@@ -67,7 +67,7 @@ namespace Sandbox
 		{
 			if ( thirdperson_orbit && input.Down( InputButton.Walk ) )
 			{
-				if ( input.Down( InputButton.Attack1 ) )
+				if ( input.Down( InputButton.PrimaryAttack ) )
 				{
 					orbitDistance += input.AnalogLook.pitch;
 					orbitDistance = orbitDistance.Clamp( 0, 1000 );

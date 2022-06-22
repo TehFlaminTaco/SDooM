@@ -43,7 +43,7 @@ public partial class DoomPlayer : Player
 	//[Net] public (int blue, int yellow, int red) keys {get;set;} 
 	[Net, Predicted] public KeyData Keys {get;set;}
 
-	public Clothing.Container Clothing = new();
+	public ClothingContainer Clothing = new();
 
 	[Net] public bool GodMode {get; set;}
 
@@ -334,7 +334,7 @@ public partial class DoomPlayer : Player
 		TickPlayerUse();
 		SimulateActiveChild( cl, ActiveChild );
 
-		if(!Input.Down(InputButton.Attack1))RampageStart = 0;
+		if(!Input.Down(InputButton.PrimaryAttack))RampageStart = 0;
 
 		if ( Input.Pressed( InputButton.View ) )
 		{
@@ -392,7 +392,7 @@ public partial class DoomPlayer : Player
 		}
 	}
 
-	[ServerCmd( "inventory_current" )]
+	[ConCmd.Server( "inventory_current" )]
 	public static void SetInventoryCurrent( string entName )
 	{
 		var target = (Player)ConsoleSystem.Caller.Pawn;
@@ -408,7 +408,7 @@ public partial class DoomPlayer : Player
 			if ( !slot.IsValid() )
 				continue;
 
-			if ( !slot.ClassInfo.IsNamed( entName ) )
+			if ( slot.ClassName !=  entName  )
 				continue;
 
 			inventory.SetActiveSlot( i, false );

@@ -2,7 +2,7 @@ using System;
 using System.Text.RegularExpressions;
 using Sandbox;
 
-public class LineSwitch : AnimEntity {
+public class LineSwitch : AnimatedEntity {
     public Linedef line;
     TimeSince switchFinish = 0f;
     bool switchTurnedOn = false;

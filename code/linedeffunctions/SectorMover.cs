@@ -1,7 +1,7 @@
 using System;
 using Sandbox;
 
-public class SectorMover : AnimEntity {
+public class SectorMover : AnimatedEntity {
     public Sector sector;
     public int speed = 4;
     public bool isFloor = false;

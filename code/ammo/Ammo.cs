@@ -141,7 +141,7 @@ partial class Weapon {
 
     public override bool CanPrimaryAttack()
     {
-        if ( !Owner.IsValid() || !Input.Down( InputButton.Attack1 ) ) return false;
+        if ( !Owner.IsValid() || !Input.Down( InputButton.PrimaryAttack ) ) return false;
         if(UsesAmmo)if(!((Owner as DoomPlayer)?.HasAmmo(Clip1Type)??false)) return false;
 
         var rate = PrimaryRate;
@@ -152,7 +152,7 @@ partial class Weapon {
 
     public override bool CanSecondaryAttack()
     {
-        if ( !Owner.IsValid() || !Input.Down( InputButton.Attack2 ) ) return false;
+        if ( !Owner.IsValid() || !Input.Down( InputButton.SecondaryAttack ) ) return false;
         if(UsesAmmo)if(!((Owner as DoomPlayer)?.HasAmmo(Clip2Type)??false)) return false;
 
         var rate = SecondaryRate;

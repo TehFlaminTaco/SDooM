@@ -1,7 +1,7 @@
 using System.Linq;
 using Sandbox;
 
-public partial class SectorFunction : AnimEntity {
+public partial class SectorFunction : AnimatedEntity {
     [Net] public int _sector {get; set;}
     [Net] public bool Finished {get; set;}
     bool didSetup = false;

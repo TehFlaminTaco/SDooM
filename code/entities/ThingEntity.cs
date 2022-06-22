@@ -123,7 +123,8 @@ public class BillboardSprite : ModelEntity{
 		if(mat == null){
 			mat = Material.Load("materials/pixelperfect.vmat").CreateCopy();
 			mat.OverrideTexture("Color", spriteTex);
-			TextureAnimator.TryGenerateAnimator(this, mat, newSprite, TextureAnimator.Mode.SPRITE, 6);
+            if(IsClient)
+			    TextureAnimator.TryGenerateAnimator(this, mat, newSprite, TextureAnimator.Mode.SPRITE, 6);
 		}
 		mesh.Material = mat;
 
